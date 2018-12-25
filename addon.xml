@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.tvtime"
        name="TV Time"
-       version="1.2.2"
-       provider-name="alxlaxv">
+       version="1.3.0"
+       provider-name="oddbytes">
   <requires>
     <import addon="xbmc.python" version="2.19.0"/>
   </requires>
@@ -15,13 +15,14 @@
     <description lang="en">Automatically set episodes as watched on tvtime.com - Can be done when watching the episode or from the contextual menu of the episode. You can also synchronize the whole or a part of your library.</description>
     <description lang="fr">Marque automatiquement les épisodes comme vus sur tvtime.com - Peut être fait tout en regardant l'épisode ou via le menu contextuel de l'épisode. Vous pouvez aussi synchroniser l'entièreté ou une partie de votre librairie.</description>
     <description lang="it">Imposta automaticamente come visti gli episodi su tvtime.com - Può essere fatto mentre guardi l'episodio o dal menù contestuale della puntata. è anche possibile sincronizzare l'intera o una parte della libreria.</description>
+    <description lang="es">Marca los episodios vistos automáticamente en tvtime.com. También permite hacerlo durante el visionado o desde el menú contextual del episodio. Además permite sincronizar todo o parte de la librería.</description>
     <platform>all</platform>
-    <language>en fr it</language>
+    <language>en fr it es</language>
     <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
     <forum>http://forum.kodi.tv/showthread.php?tid=199604</forum>
-    <website>https://github.com/alxlaxv/script.tvtime</website>
-    <source>https://github.com/alxlaxv/script.tvtime.git</source>
-    <email>alxlaxv[AT]users[DOT]noreply[DOT]github[DOT]com</email>
+    <website>https://github.com/oddbytes/script.tvtime</website>
+    <source>https://github.com/oddbytes/script.tvtime.git</source>
+    <email>mack[AT]oddbytes[DOT]clearthis[DOT]oddbytes[DOT]net</email>
   </extension>
 </addon>
 

@@ -5,6 +5,11 @@ import cookielib
 import re
 import urllib, urllib2
 import json
+import xbmc
+import xbmcaddon
+
+__addon__         = xbmcaddon.Addon()
+__scriptname__    = __addon__.getAddonInfo('name')
 
 request_uri = "https://api.tvtime.com/v1/"
 
@@ -16,7 +21,10 @@ class FindEpisode(object):
         if len(self.filename) > 0:
             self.action = 'episode?access_token=%s&filename=%s' % (self.token, self.filename)
         else:
-            self.action = 'episode?access_token=%s&episode_id=%s' % (self.token, self.episode_id)
+            if self.episode_id.startswith('tt'):
+                self.action = 'episode?access_token=%s&imdb_id=%s' % (self.token, self.episode_id)
+            else:
+                self.action = 'episode?access_token=%s&episode_id=%s' % (self.token, self.episode_id)
         
 
         self.cj = cookielib.CookieJar()
@@ -34,9 +42,12 @@ class FindEpisode(object):
         self.opener.get_method = lambda: 'GET'
         
         request_url = "%s%s" % (request_uri, self.action)
+        log('FindEpisode request_url=%s' % request_url)
         try:
             response = self.opener.open(request_url, None)
+
             data = json.loads(''.join(response.readlines()))
+            log('FindEpisode response=%s' % data)
         except:
             data = None
         
@@ -51,6 +62,18 @@ class FindEpisode(object):
            self.number = data['episode']['number']
            self.id = data['episode']['id']
            
+def log(msg):
+    xbmc.log("### [%s] - %s" % (__scriptname__, encode(msg), ),
+            level=xbmc.LOGDEBUG) #100 #xbmc.LOGDEBUG
+
+def encode(string):
+    result = ''
+    try:
+        result = string.encode('UTF-8','replace')
+    except UnicodeDecodeError:
+        result = 'UTF-8 Error'
+    return result 
+
 class Show(object):
     def __init__(self, token, show_id):
         self.token = token
@@ -191,6 +214,7 @@ class MarkAsWatched(object):
         try:
             response = self.opener.open(request_url, request_data)
             data = json.loads(''.join(response.readlines()))
+            log ('Mark watched response=%s' % data)
         except:
             data = None
         
@@ -260,9 +284,11 @@ class SaveProgress(object):
         self.opener.get_method = lambda: 'POST'
              
         request_url = "%s%s" % (request_uri, self.action)
+        log('SaveProgress request_url=%s' % request_url)
         try:
             response = self.opener.open(request_url, request_data)
             data = json.loads(''.join(response.readlines()))
+            log('SaveProgress response=%s' % data)
         except:
             data = None
         

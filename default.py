@@ -78,6 +78,7 @@ class Monitor(xbmc.Monitor):
             log('Player.OnPlay')
             if player.http == 'true' and player.getPlayingFile()[:4] == 'http' and re.search(r'[sS][0-9]*[eE][0-9]*', os.path.basename(player.getPlayingFile()), flags=0) :
                 player.http_playing = True
+                log('http_playing true - using filename')
                 player.filename = os.path.basename(player.getPlayingFile())
                 self.startcut = player.filename.find("%5B")
                 self.endcut = player.filename.find("%5D")
@@ -103,6 +104,7 @@ class Monitor(xbmc.Monitor):
                         notif(__language__(32905), time=2500)
             else:
                 player.http_playing = False
+                log('http_playing false using episodeid')
                 response = json.loads(data) 
                 log('%s' % response)
                 if response.get('item').get('type') == 'episode':
@@ -123,7 +125,7 @@ class Monitor(xbmc.Monitor):
                                     return
                                 if player.notif_scrobbling == 'false':
                                     return
-                                notif('%s %s %sx%s' % (__language__(32904), player.episode.showname, player.episode.season_number, player.episode.number), time=2500)
+                                notif('%s %sx%s %s' % (player.episode.showname, player.episode.season_number, player.episode.number,player.episode.episodename), time=2500)
                         else:
                             if player.notifications == 'true':
                                 if player.notif_during_playback == 'false' and player.isPlaying() == 1:
@@ -180,6 +182,7 @@ class Monitor(xbmc.Monitor):
                 if player.progress == 'true':
                     if response.get('item').get('type') == 'episode':
                         xbmc_id = response.get('item').get('id')
+                        log('getEpisodeTVDB xbmc_id=%s' % xbmc_id)
                         item = self.getEpisodeTVDB(xbmc_id)    
                         log('showtitle=%s' % item['showtitle'])
                         log('season=%s' % item['season'])
@@ -194,8 +197,10 @@ class Monitor(xbmc.Monitor):
         if (method == 'VideoLibrary.OnUpdate'):
             log('VideoLibrary.OnUpdate')
             response = json.loads(data) 
-            log('%s' % response)
-            if response.get('item').get('type') == 'episode':
+            log('VideoLibrary.OnUpdate %s' % response)
+            
+
+            if 'item' in response and response.get('item').get('type') == 'episode':
                 xbmc_id = response.get('item').get('id')
                 playcount = response.get('playcount') 
                 log('playcount=%s' % playcount)
@@ -265,13 +270,13 @@ class Monitor(xbmc.Monitor):
         rpccmd = json.dumps(rpccmd)
         result = xbmc.executeJSONRPC(rpccmd)
         result = json.loads(result)
-        log('result=%s' % result)
+        log('getEpisodeTVDB result=%s' % result)
         if 'unknown' in result['result']['episodedetails']['uniqueid']:
             episode_id = result['result']['episodedetails']['uniqueid']['unknown']
-        elif 'imdb' in result['result']['episodedetails']['uniqueid']:
-            episode_id = result['result']['episodedetails']['uniqueid']['imdb']
         elif 'tvdb' in result['result']['episodedetails']['uniqueid']:
             episode_id = result['result']['episodedetails']['uniqueid']['tvdb']
+        elif 'imdb' in result['result']['episodedetails']['uniqueid']:
+            episode_id = result['result']['episodedetails']['uniqueid']['imdb']
         else:
             return False
         log('episode_id=%s' % episode_id)
